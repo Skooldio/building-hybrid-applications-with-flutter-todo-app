@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/add_todo_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
           foregroundColor: Color(0xFFFFFFFF)
         )
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: "My Todo app"),
     );
   }
 }
@@ -32,13 +33,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +50,14 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _onFabClicked,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void _onFabClicked() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddTodoPage()));
   }
 }
