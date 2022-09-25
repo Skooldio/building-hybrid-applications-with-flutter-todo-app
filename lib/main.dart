@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_app/TodoItem.dart';
+import 'package:todo_app/TodoProvider.dart';
 import 'package:todo_app/add_todo_page.dart';
 
 void main() {
@@ -15,12 +17,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
-        textTheme: GoogleFonts.latoTextTheme(),
-        appBarTheme: const AppBarTheme(
-          foregroundColor: Color(0xFFFFFFFF)
-        )
-      ),
+          primarySwatch: Colors.orange,
+          textTheme: GoogleFonts.latoTextTheme(),
+          appBarTheme: const AppBarTheme(foregroundColor: Color(0xFFFFFFFF))),
       home: const MyHomePage(title: "My Todo app"),
     );
   }
@@ -35,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  TodoProvider todoProvider = TodoProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -42,15 +42,29 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: ListView.builder(
-          itemCount: 20,
-          itemBuilder: (context, index) {
-            return ListTile(
-              leading: Checkbox(value: false, onChanged: (value) {},),
-              title: const Text("Title"),
-              subtitle: const Text("Description"),
+      body: FutureBuilder<List<TodoItem>>(
+        future: _fetchTodos(),
+        initialData: [],
+        builder:
+            (BuildContext context, AsyncSnapshot<List<TodoItem>> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                itemCount: snapshot.data?.length,
+                itemBuilder: (context, index) {
+                  var todoItem = snapshot.data?[index];
+                  return ListTile(
+                    title: Text(todoItem?.title ?? ""),
+                    subtitle: Text(todoItem?.notes ?? ""),
+                    leading: Checkbox(value: todoItem?.done ?? false, onChanged: (value) {},),
+                  );
+                });
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          }),
+          }
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _onFabClicked,
         tooltip: 'Increment',
@@ -60,6 +74,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onFabClicked() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddTodoPage()));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => AddTodoPage()));
+  }
+
+  Future<List<TodoItem>> _fetchTodos() async {
+    return await todoProvider.fetchTodos();
   }
 }
