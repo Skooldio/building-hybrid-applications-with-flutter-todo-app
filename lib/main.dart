@@ -13,7 +13,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.orange,
+        appBarTheme: const AppBarTheme(
+          foregroundColor: Color(0xFFFFFFFF)
+        )
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -46,18 +49,10 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ListView.builder(
           itemCount: 20,
           itemBuilder: (context, index) {
-            return Row(
-              children: [
-                Checkbox(value: false, onChanged: (value) {}),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Title"),
-                    Text("Description"),
-                    SizedBox(height: 8,)
-                  ],
-                ),
-              ],
+            return ListTile(
+              leading: Checkbox(value: false, onChanged: (value) {},),
+              title: const Text("Title"),
+              subtitle: const Text("Description"),
             );
           }),
       floatingActionButton: FloatingActionButton(
