@@ -34,4 +34,9 @@ class TodoProvider {
         whereArgs: [item.id],
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
+
+  Future<void> deleteTodo(TodoItem item) async {
+    Database db = await database();
+    await db.delete(TodoTable, where: "id = ?", whereArgs: [item.id]);
+  }
 }

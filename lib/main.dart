@@ -52,10 +52,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   var todoItem = items[index];
-                  return ListTile(
-                    title: Text(todoItem.title),
-                    subtitle: Text(todoItem.notes),
-                    leading: Checkbox(value: todoItem.done, onChanged: (value) => _onCheckValueChanged(value ?? false, todoItem),),
+                  return Dismissible(
+                    key: UniqueKey(),
+                    direction: DismissDirection.endToStart,
+                    background: Container(),
+                    secondaryBackground: Container(color: Colors.red,),
+                    onDismissed: (direction) {
+                      setState(() {
+                        todoProvider.deleteTodo(todoItem);
+                      });
+                    },
+                    child: ListTile(
+                      title: Text(todoItem.title),
+                      subtitle: Text(todoItem.notes),
+                      leading: Checkbox(value: todoItem.done, onChanged: (value) => _onCheckValueChanged(value ?? false, todoItem),),
+                    ),
                   );
                 });
           } else {
