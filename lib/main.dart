@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   return ListTile(
                     title: Text(todoItem.title),
                     subtitle: Text(todoItem.notes),
-                    leading: Checkbox(value: todoItem.done, onChanged: (value) {},),
+                    leading: Checkbox(value: todoItem.done, onChanged: (value) => _onCheckValueChanged(value ?? false, todoItem),),
                   );
                 });
           } else {
@@ -80,6 +80,14 @@ class _MyHomePageState extends State<MyHomePage> {
           setState(() {
 
           });
+    });
+  }
+
+  void _onCheckValueChanged(bool isChecked, TodoItem item) async {
+    TodoItem newItem = TodoItem(item.id, item.title, item.notes, isChecked);
+    await todoProvider.updateTodo(newItem);
+    setState(() {
+
     });
   }
 

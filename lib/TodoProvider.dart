@@ -27,4 +27,11 @@ class TodoProvider {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  Future<void> updateTodo(TodoItem item) async {
+    Database db = await database();
+    await db.update(TodoTable, item.toMap(),
+        where: "id = ?",
+        whereArgs: [item.id],
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
 }
