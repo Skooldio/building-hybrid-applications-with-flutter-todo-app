@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_app/TodoBloc.dart';
+import 'package:todo_app/TodoEvent.dart';
 import 'package:todo_app/TodoItem.dart';
 import 'package:todo_app/TodoProvider.dart';
+import 'package:todo_app/TodoState.dart';
 import 'package:todo_app/add_todo_page.dart';
 
 void main() {
@@ -14,14 +18,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-          primarySwatch: Colors.orange,
-          textTheme: GoogleFonts.latoTextTheme(),
-          appBarTheme: const AppBarTheme(foregroundColor: Color(0xFFFFFFFF))),
-      home: const MyHomePage(title: "My Todo app"),
-    );
+    return MultiBlocProvider(
+        providers: [BlocProvider(create: (context) => TodoBloc())],
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+              primarySwatch: Colors.orange,
+              textTheme: GoogleFonts.latoTextTheme(),
+              appBarTheme:
+                  const AppBarTheme(foregroundColor: Color(0xFFFFFFFF))),
+          home: const MyHomePage(title: "My Todo app"),
+        ));
   }
 }
 
@@ -42,12 +49,13 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: FutureBuilder<List<TodoItem>>(
-        future: _fetchTodos(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<TodoItem>> snapshot) {
-          if (snapshot.hasData) {
-            List<TodoItem> items = snapshot.data ?? [];
+      body: BlocBuilder<TodoBloc, TodoState>(
+        builder: (context, state) {
+          if (state is InitialTodoState) {
+            context.read<TodoBloc>().add(FetchTodoEvent());
+          }
+          if (state is TodoListState) {
+            var items = state.todos;
             return ListView.builder(
                 itemCount: items.length,
                 itemBuilder: (context, index) {
@@ -56,7 +64,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     key: UniqueKey(),
                     direction: DismissDirection.endToStart,
                     background: Container(),
-                    secondaryBackground: Container(color: Colors.red,),
+                    secondaryBackground: Container(
+                      color: Colors.red,
+                    ),
                     onDismissed: (direction) {
                       setState(() {
                         todoProvider.deleteTodo(todoItem);
@@ -65,15 +75,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: ListTile(
                       title: Text(todoItem.title),
                       subtitle: Text(todoItem.notes),
-                      leading: Checkbox(value: todoItem.done, onChanged: (value) => _onCheckValueChanged(value ?? false, todoItem),),
+                      leading: Checkbox(
+                        value: todoItem.done,
+                        onChanged: (value) =>
+                            _onCheckValueChanged(value ?? false, todoItem),
+                      ),
                     ),
                   );
                 });
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
           }
+          return Center(child: CircularProgressIndicator());
+
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -88,18 +100,14 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => AddTodoPage()))
         .then((value) {
-          setState(() {
-
-          });
+      setState(() {});
     });
   }
 
   void _onCheckValueChanged(bool isChecked, TodoItem item) async {
     TodoItem newItem = TodoItem(item.id, item.title, item.notes, isChecked);
     await todoProvider.updateTodo(newItem);
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   Future<List<TodoItem>> _fetchTodos() async {
