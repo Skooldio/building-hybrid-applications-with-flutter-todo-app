@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app/add_todo_page.dart';
 
 void main() {
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.orange,
+        textTheme: GoogleFonts.latoTextTheme(),
         appBarTheme: const AppBarTheme(
           foregroundColor: Color(0xFFFFFFFF)
         )
