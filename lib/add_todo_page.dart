@@ -26,15 +26,20 @@ class _AddTodoPageState extends State<AddTodoPage> {
             children: [
               TextField(decoration: InputDecoration(labelText: "Title"), controller: _titleController,),
               TextField(decoration: InputDecoration(labelText: "Description"), controller: _notesController,),
-              ElevatedButton(onPressed: () {
+              ElevatedButton(onPressed: () async {
                 var todo = TodoItem(Uuid().v4(), _titleController.text, _notesController.text, false);
-                TodoProvider.instance.insertTodo(todo);
-                Navigator.of(context).pop();
+                await TodoProvider.instance.insertTodo(todo);
+                if(!mounted) return;
+                closePage(context);
               }, child: Text("Add"))
             ],
           ),
         ),
       ),
     );
+  }
+
+  void closePage(BuildContext context) {
+    Navigator.of(context).pop();
   }
 }

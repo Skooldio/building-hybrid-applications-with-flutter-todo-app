@@ -75,7 +75,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onFabClicked() {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => AddTodoPage()));
+        .push(MaterialPageRoute(builder: (context) => AddTodoPage()))
+        .then((value) {
+          setState(() {
+
+          });
+    });
   }
 
   Future<List<TodoItem>> _fetchTodos() async {
