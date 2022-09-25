@@ -34,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  TodoProvider todoProvider = TodoProvider();
+  TodoProvider todoProvider = TodoProvider.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -44,18 +44,18 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: FutureBuilder<List<TodoItem>>(
         future: _fetchTodos(),
-        initialData: [],
         builder:
             (BuildContext context, AsyncSnapshot<List<TodoItem>> snapshot) {
           if (snapshot.hasData) {
+            List<TodoItem> items = snapshot.data ?? [];
             return ListView.builder(
-                itemCount: snapshot.data?.length,
+                itemCount: items.length,
                 itemBuilder: (context, index) {
-                  var todoItem = snapshot.data?[index];
+                  var todoItem = items[index];
                   return ListTile(
-                    title: Text(todoItem?.title ?? ""),
-                    subtitle: Text(todoItem?.notes ?? ""),
-                    leading: Checkbox(value: todoItem?.done ?? false, onChanged: (value) {},),
+                    title: Text(todoItem.title),
+                    subtitle: Text(todoItem.notes),
+                    leading: Checkbox(value: todoItem.done, onChanged: (value) {},),
                   );
                 });
           } else {

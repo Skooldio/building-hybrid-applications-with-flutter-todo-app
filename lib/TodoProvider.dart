@@ -4,6 +4,7 @@ import 'package:todo_app/TodoItem.dart';
 
 class TodoProvider {
   static const TodoTable = "TodoItemTable";
+  static TodoProvider instance = TodoProvider();
 
   Future<Database> database() async {
     return await openDatabase(join(await getDatabasesPath(), 'todo_item.db'),
