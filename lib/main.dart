@@ -23,10 +23,9 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData(
+            useMaterial3: true,
               primarySwatch: Colors.orange,
-              textTheme: GoogleFonts.latoTextTheme(),
-              appBarTheme:
-                  const AppBarTheme(foregroundColor: Color(0xFFFFFFFF))),
+              textTheme: GoogleFonts.latoTextTheme()),
           home: const MyHomePage(title: "My Todo app"),
         ));
   }
@@ -100,7 +99,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => AddTodoPage()))
         .then((value) {
-      setState(() {});
     });
   }
 
